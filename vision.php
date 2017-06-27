@@ -45,7 +45,8 @@ for($i = 0; $i < count($images); $i++) {
 
 function getImageBinary($image_url) {
 
-	global $apikey,$jsondir;
+	global $apikey, $jsondir;
+    global $enable_feature_label_detection, $enable_feature_text_detection, $enable_feature_web_detection_detection;
 
 	$jsonfn = $jsondir . sha1($image_url) . ".json";
 
@@ -55,7 +56,7 @@ function getImageBinary($image_url) {
 		$image_base64 = base64_encode(file_get_contents($image_url));
 		
 		$cvurl = 'https://vision.googleapis.com/v1/images:annotate?key=' . $apikey;
-		
+
 		$request_json = '{
 			"requests": [
 				{
@@ -63,15 +64,32 @@ function getImageBinary($image_url) {
 						"content": "'.$image_base64.'"
 					},
 					"features": [
+';
+        if ($enable_feature_label_detection) {
+            $request_json .= '
 						{
 							"type": "LABEL_DETECTION"
 						},
 						{
+							"type": "SAFE_SEARCH_DETECTION"
+						},
+                        ';
+        }
+        if ($enable_feature_text_detection) {
+            $request_json .= '
+						{
 							"type": "TEXT_DETECTION"
 						},
+                ';
+        }
+        if ($enable_feature_web_detection) {
+            $request_json .= '
 						{
-							"type": "SAFE_SEARCH_DETECTION"
+							"type": "WEB_DETECTION"
 						}
+                ';
+        }
+        $request_json .= '
 					]
 				}
 			]

@@ -12,6 +12,11 @@ $outputsdir = getcwd() . "/outputs/";
 
 $apikey = "";					// your api key
 
+$features = array(
+        
+
+        );
+
 ignore_user_abort(false);
 set_time_limit(3600*5);
 ini_set("memory_limit","100M");
